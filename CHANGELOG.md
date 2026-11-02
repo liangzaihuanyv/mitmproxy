@@ -7,6 +7,9 @@
 
 ## Unreleased: mitmproxy next
 
+- Fix `stickycookie` attaching cookies to request paths that only share a character prefix:
+  a `Path=/app` cookie is no longer sent to `/application` or `/app-v2`, and the request
+  path is now matched with the RFC 6265 path-match rules, ignoring the query string.
 - Expand `~` in the `hardump` option, like other file path options. Previously, the HAR file
   could not be written on exit and the collected flows were lost.
   ([#8541](https://github.com/mitmproxy/mitmproxy/pull/8541), @memx13)

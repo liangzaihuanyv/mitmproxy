@@ -32,6 +32,19 @@ def domain_match(a: str, b: str) -> bool:
     return False
 
 
+def path_match(path: str, request_path: str) -> bool:
+    """
+    Returns True if the request path path-matches the cookie path as defined in
+    RFC 6265, Section 5.1.4. The query string is not part of the request path.
+    """
+    request_path = request_path.split("?", 1)[0]
+    if request_path == path:
+        return True
+    return request_path.startswith(path) and (
+        path.endswith("/") or request_path[len(path)] == "/"
+    )
+
+
 class StickyCookie:
     def __init__(self) -> None:
         self.jar: collections.defaultdict[TOrigin, dict[str, str]] = (
@@ -85,7 +98,7 @@ class StickyCookie:
                     match = [
                         domain_match(flow.request.host, domain),
                         flow.request.port == port,
-                        flow.request.path.startswith(path),
+                        path_match(path, flow.request.path),
                     ]
                     if all(match):
                         cookie_list.extend(c.items())
